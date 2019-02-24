@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
+  const initialCheckValues = JSON.parse(
+    window.localStorage.getItem("checked")
+  ) || [{}];
   const [data, setData] = useState([]);
+  const [values, setValues] = useState(initialCheckValues);
 
   const fetchData = async () => {
     const result = await fetch(
@@ -17,12 +21,21 @@ const Home = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    window.localStorage.setItem("checked", JSON.stringify(values));
+  }, [values]);
+
+  const toggleCheckboxes = ({ target: { id, checked } }) => {
+    setValues({ ...values, [id]: checked });
+  };
+
   return (
     <div className="main">
       <div className="productlist-home">
         {data.length > 0 &&
           data.map(photo => (
             <div className="productslists__card" key={photo.id}>
+              <div className={values[photo.id] ? "overlay" : ""} />
               <Link
                 className="productslist__link"
                 to={{ pathname: `/article/${photo.id}`, state: photo }}
@@ -48,6 +61,19 @@ const Home = () => {
                   alignItems: "flex-end"
                 }}
               />
+              <label htmlFor={photo.id} className="read container">
+                {values[photo.id] ? "READ" : "UNREAD"}
+
+                <input
+                  id={photo.id}
+                  name={photo.id}
+                  className="checkbox"
+                  type="checkbox"
+                  checked={values[photo.id] || false}
+                  onChange={toggleCheckboxes}
+                />
+                <span className="checkmark" />
+              </label>
             </div>
           ))}
       </div>
