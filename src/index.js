@@ -3,11 +3,14 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import * as serviceWorker from "./serviceWorker";
 import Home from "./Home";
+import Article from "./Article";
+import "./styles.css";
 
 const App = () => {
   return (
     <Switch>
       <Route exact path="/" component={Home} />
+      <Route path="/article/:id" component={Article} />
     </Switch>
   );
 };
